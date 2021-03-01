@@ -2,6 +2,8 @@
 #include <experimental/filesystem>
 #include <fstream>
 #include <string>
+#include <future>
+#include <thread>
 
 #include "solution.hpp"
 
@@ -13,8 +15,6 @@ class EndToEndTestsFixture : public testing::TestWithParam<std::string>
 
 TEST_P(EndToEndTestsFixture, OutputAsExpected)
 {
-    testing::PrintToString<int>(1);
-
     std::string test_name = GetParam();
     fs::path dir("test_cases");
     fs::path input_file(test_name + "_in.txt");
@@ -23,12 +23,30 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected)
     fs::path full_input_file_path = dir / input_file;
     fs::path full_output_file_path = dir / output_file;
 
-    std::ostringstream out;
+    ASSERT_TRUE(fs::exists(full_input_file_path));
+    ASSERT_TRUE(fs::exists(full_output_file_path));
+
     std::ifstream in(full_input_file_path.string());
 
-    solution(in, out);
+    std::promise<std::string> p;
 
-    std::string res = out.str();
+    std::thread t([&in, &p]() {
+        std::ostringstream out;
+        solution(in, out);
+        p.set_value(out.str());
+    });
+
+    auto f = p.get_future();
+    auto st = f.wait_for(std::chrono::seconds(10));
+    if (st != std::future_status::ready)
+    {
+        t.detach();
+        FAIL() << "Test timed out";
+    }
+
+    t.join();
+    auto res = f.get();
+
     std::ifstream output_file_stream(full_output_file_path.string());
     std::string exp_res;
 
