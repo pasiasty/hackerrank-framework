@@ -23,8 +23,14 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected)
     fs::path full_input_file_path = dir / input_file;
     fs::path full_output_file_path = dir / output_file;
 
-    ASSERT_TRUE(fs::exists(full_input_file_path));
-    ASSERT_TRUE(fs::exists(full_output_file_path));
+    if (!fs::exists(full_input_file_path))
+    {
+        FAIL() << "Full input path (" << full_input_file_path << ") does not exist";
+    }
+    if (!fs::exists(full_output_file_path))
+    {
+        FAIL() << "Full output path (" << full_output_file_path << ") does not exist";
+    }
 
     std::ifstream in(full_input_file_path.string());
 
@@ -82,7 +88,4 @@ std::set<std::string> GetTests()
     return res;
 }
 
-INSTANTIATE_TEST_CASE_P(
-    EndToEndTests,
-    EndToEndTestsFixture,
-    testing::ValuesIn(GetTests()));
+INSTANTIATE_TEST_CASE_P(EndToEndTests, EndToEndTestsFixture, testing::ValuesIn(GetTests()));
