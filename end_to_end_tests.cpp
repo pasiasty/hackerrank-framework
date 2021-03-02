@@ -66,7 +66,7 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected)
     std::string exp_res;
 
     std::ostringstream exp_res_ss;
-    exp_res_ss << output_file_stream.rdbuf(); // reading data
+    exp_res_ss << output_file_stream.rdbuf();
     exp_res = exp_res_ss.str();
 
     if (exp_res != res)
