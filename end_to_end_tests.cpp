@@ -36,17 +36,26 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected)
 
     std::promise<std::string> p;
 
-    std::thread t([&in, &p]() {
+    std::thread t([&in, &p, &test_name]() {
+#if defined(__APPLE__) || defined(__linux) || defined(__unix) || defined(__posix)
+        pthread_setname_np(pthread_self(), (test_name + "_thread").c_str());
+#endif
+
         std::ostringstream out;
         solution(in, out);
         p.set_value(out.str());
     });
 
     auto f = p.get_future();
-    auto st = f.wait_for(std::chrono::seconds(10));
+    auto st = f.wait_for(std::chrono::seconds(TESTS_TIMEOUT_IN_SECONDS));
     if (st != std::future_status::ready)
     {
+#if defined(__APPLE__) || defined(__linux) || defined(__unix) || defined(__posix)
+        pthread_cancel(t.native_handle());
+        t.join();
+#else
         t.detach();
+#endif
         FAIL() << "Test timed out";
     }
 
