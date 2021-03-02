@@ -1,7 +1,6 @@
 #include "solution.hpp"
 
-int main()
-{
-    solution();
-    return 0;
+int main() {
+  solution();
+  return 0;
 }
