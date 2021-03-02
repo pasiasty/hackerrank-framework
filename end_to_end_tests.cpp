@@ -86,4 +86,4 @@ std::set<std::string> GetTests() {
   return res;
 }
 
-INSTANTIATE_TEST_CASE_P(EndToEndTests, EndToEndTestsFixture, testing::ValuesIn(GetTests()));
+INSTANTIATE_TEST_SUITE_P(EndToEndTests, EndToEndTestsFixture, testing::ValuesIn(GetTests()));

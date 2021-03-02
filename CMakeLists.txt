@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 project (hackerrank_cpp)
 
 set(CMAKE_C_COMPILER "/usr/bin/clang")
