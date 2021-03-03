@@ -33,7 +33,7 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected) {
 
   std::thread t([&in, &p, &test_name]() {
 #if defined(__APPLE__) || defined(__linux) || defined(__unix) || defined(__posix)
-    pthread_setname_np(pthread_self(), (test_name + "_thread").c_str());
+    pthread_setname_np(pthread_self(), ("test_thread_" + test_name).c_str());
 #endif
 
     std::ostringstream out;
@@ -80,6 +80,8 @@ std::set<std::string> GetTests() {
     auto end_idx = path.rfind('_');
 
     std::string name = path.substr(beg_idx, end_idx - beg_idx);
+    if (name.starts_with("disabled_"))
+      continue;
     res.insert(name);
   }
 
