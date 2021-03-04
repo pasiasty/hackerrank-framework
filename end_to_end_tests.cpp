@@ -122,4 +122,11 @@ std::set<std::string> GetTests() {
   return res;
 }
 
-INSTANTIATE_TEST_SUITE_P(EndToEndTests, EndToEndTestsFixture, testing::ValuesIn(GetTests()));
+struct CustomPrintToStringParamName {
+  template <class ParamType> std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
+    return info.param;
+  }
+};
+
+INSTANTIATE_TEST_SUITE_P(EndToEndTests, EndToEndTestsFixture, testing::ValuesIn(GetTests()),
+                         CustomPrintToStringParamName());
