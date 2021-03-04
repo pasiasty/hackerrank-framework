@@ -7,13 +7,21 @@
 
 #include "solution.hpp"
 
+#ifndef TESTS_TIMEOUT_IN_SECONDS
+#define TESTS_TIMEOUT_IN_SECONDS 10
+#endif
+
+#ifndef ROOT_DIR
+#define ROOT_DIR "."
+#endif
+
 namespace fs = std::experimental::filesystem;
 
 class EndToEndTestsFixture : public testing::TestWithParam<std::string> {};
 
 TEST_P(EndToEndTestsFixture, OutputAsExpected) {
   std::string test_name = GetParam();
-  fs::path dir("test_cases");
+  auto dir = fs::path(ROOT_DIR) / fs::path("test_cases");
   fs::path input_file(test_name + "_in.txt");
   fs::path output_file(test_name + "_out.txt");
 
@@ -74,9 +82,9 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected) {
 std::set<std::string> GetTests() {
   std::set<std::string> res;
 
-  for (const auto &entry : fs::directory_iterator("test_cases")) {
+  for (const auto &entry : fs::directory_iterator(fs::path(ROOT_DIR) / fs::path("test_cases"))) {
     std::string path = entry.path();
-    auto beg_idx = path.find('/') + 1;
+    auto beg_idx = path.rfind('/') + 1;
     auto end_idx = path.rfind('_');
 
     std::string name = path.substr(beg_idx, end_idx - beg_idx);

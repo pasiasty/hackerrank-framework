@@ -15,7 +15,7 @@ add_executable(main main.cpp)
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_compile_definitions(TESTS_TIMEOUT_IN_SECONDS=10)
+add_compile_definitions(TESTS_TIMEOUT_IN_SECONDS=10 ROOT_DIR="${CMAKE_SOURCE_DIR}")
 
 set_source_files_properties(end_to_end_tests.cpp PROPERTIES COMPILE_FLAGS -Wno-gnu-zero-variadic-macro-arguments)
 add_executable(end_to_end_tests end_to_end_tests.cpp)
