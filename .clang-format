@@ -1,3 +1,4 @@
----
 ColumnLimit: 120
 AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: Empty

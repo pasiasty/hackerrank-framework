@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
+#include <unordered_set>
 
 #include "solution.hpp"
 
@@ -79,8 +80,31 @@ TEST_P(EndToEndTestsFixture, OutputAsExpected) {
   EXPECT_EQ(exp_res, res);
 }
 
+std::unordered_set<std::string> ReadLinesFromFile(std::string fname) {
+  std::ifstream in(fname);
+  std::unordered_set<std::string> res;
+  std::string line;
+  while (std::getline(in, line)) {
+    if (line.empty())
+      continue;
+    res.insert(line);
+  }
+  return res;
+}
+
+std::unordered_set<std::string> Whitelist() {
+  return ReadLinesFromFile("tests_whitelist.txt");
+}
+
+std::unordered_set<std::string> Blacklist() {
+  return ReadLinesFromFile("tests_blacklist.txt");
+}
+
 std::set<std::string> GetTests() {
   std::set<std::string> res;
+
+  auto whitelist = Whitelist();
+  auto blacklist = Blacklist();
 
   for (const auto &entry : fs::directory_iterator(fs::path(ROOT_DIR) / fs::path("test_cases"))) {
     std::string path = entry.path();
@@ -90,7 +114,9 @@ std::set<std::string> GetTests() {
     std::string name = path.substr(beg_idx, end_idx - beg_idx);
     if (name.starts_with("disabled_"))
       continue;
-    res.insert(name);
+
+    if ((whitelist.empty() || whitelist.contains(name)) && !blacklist.contains(name))
+      res.insert(name);
   }
 
   return res;
