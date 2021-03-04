@@ -21,5 +21,3 @@ set_source_files_properties(end_to_end_tests.cpp PROPERTIES COMPILE_FLAGS -Wno-g
 add_executable(end_to_end_tests end_to_end_tests.cpp)
 target_link_libraries(end_to_end_tests gtest gtest_main stdc++fs pthread)
 add_test(end_to_end_tests end_to_end_tests)
-
-file(COPY test_cases DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
